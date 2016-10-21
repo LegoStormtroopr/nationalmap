@@ -1,6 +1,75 @@
 Change Log
 ==========
 
+### 2016-10-14
+
+* Support `openAddData` option in config.json. If true, the "Add Data" dialog is automatically opened at start up.
+* Switched to using vector tiles for region mapping.  This means region mapping is now faster and has much improved visual quality, but it no longer works with very old browsers like Internet Explorer 9.
+* Updated list of LGAs from data.gov.au.
+* Updated to [TerriaJS](https://github.com/TerriaJS/terriajs) 4.5.0.  Significant changes relevant to NationalMap users include:
+  * Added support for the Sensor Observation Service format, via the `SensorObservationServiceCatalogItem`.
+  * Added support for end date columns in CSV data (automatic with column names containing `end_date`, `end date`, `end_time`, `end time`; or set in json file using `isEndDate` in `tableStyle.columns`.
+  * Fixed calculation of end dates for moving-point CSV files, which could lead to points disappearing periodically.
+  * Fixed a bug that prevented fractional seconds in time-varying WMS periodicity.
+  * Added the ability to the workbench UI to select the `style` to use to display a Web Map Service (WMS) layer when multiple styles are available.
+  * Added the ability to the workbench UI to select from among the available dimensions of a Web Map Service (WMS) layer.
+  * Improved the error reporting and handling when specifying invalid values for the WMS COLORSCALERANGE parameter in the UI.
+  * Added the ability to drag existing points when creating a `UserDrawing`.
+  * Fixed a bug that could cause nonsensical legends for CSV columns with all null values.
+  * Fixed a bug that prevented the Share panel from being used at all if the URL shortening service encountered an error.
+  * Fixed a bug that could cause an error when adding multiple catalog items to the map quickly.
+  * Tweaked the z-order of the window that appears when hovering over a chart series, so that it does not appear on top of the Feature Information panel.
+  * Fixed a bug that could lead to incorrect colors in a legend for a CSV file with explicit `colorBins` and cut off at a minimum and maximum.
+  * We now show the feature info panel the first time a dataset is added, containing a suggestion to click the map to learn more about a location.  Also improved the wording for the feature info panel when there is no data.
+  * Fixed support for time-varying feature info for vector tile based region mapping.
+  * `updateApplicationOnMessageFromParentWindow` now also allows messages from the `opener` window, i.e. the window that opened the page by calling `window.open`.  The parent or opener may now also send a message with an `allowOrigin` property to specify an origin that should be allowed to post messages.
+  * Fixed a bug that prevented charts from loading http urls from https.
+  * The `isNcWMS` property of `WebMapServiceCatalogItem` is now set to true, and the COLORSCALERANGE controls are available in the UI, for ncWMS2 servers.
+  * Added the ability to prevent CSVs with time and `id` columns from appearing as moving points, by setting `idColumns` to either `null` or `[]`.
+  * Fixed a bug that prevented default parameters to `CatalogFunction`s from being shown in the user interface.
+  * Fixed a problem that made `BooleanParameter`s show up incorrectly in the user interface.
+  * Embedded `<chart>` elements now support two new optional attributes:
+     * `title`: overrides the title that would otherwise be derived from the name of the feature.
+     * `hide-buttons`: If `"true"`, the Expand and Download buttons are hidden from the chart.
+  * Fixed a bug in embedded `<collapsible>` elements that prevented them from being expandable.
+  * Improved SDMX-JSON support to make it possible to change region type in the UI.
+  * Deprecated `RegionMapping.setRegionColumnType` in favour of `RegionMapping.prototype.setRegionColumnType`. `regionDetails[].column` and `.disambigColumn` have also been deprecated.
+
+### 2016-09-15
+
+* Clean up support for commonwealth electoral boundaries with ABS and AEC sources. `com_elb_id_2016` and `com_elb_name_2016` are the standard field names now.
+* Fixed four broken datasets in Land and one in Infrastructure, as a result of URL changes.
+* Updated to [TerriaJS](https://github.com/TerriaJS/terriajs) 4.4.0.  Significant changes relevant to NationalMap users include:
+  * Fixed a bug that caused Cesium (3D view) to crash when plotting a CSV with non-numerical data in the depth column.
+  * Added automatic time-series charts of attributes to the feature info of time-varying region-mapped csvs.
+  * Refactored Csv, AbsItt and Sdmx-Json catalog items to depend on a common `TableCatalogItem`. Deprecated `CsvCatalogItem.setActiveTimeColumn` in favour of `tableStructure.setActiveTimeColumn`.
+  * Error in geocoding addresses in csv files now shows in dialog box.
+  * Fixed CSS styling of the timeline and added padding to the feature info panel.
+  * Enhanced JSON support to recognise JSON5 format for user-added files.
+  * Deprecated `indicesIntoUniqueValues`, `indicesOrValues`, `indicesOrNumericalValues` and `usesIndicesIntoUniqueValues` in `TableColumn` (`isEnum` replaces `usesIndicesIntoUniqueValues`).
+  * Added support for explicitly colouring enum columns using a `tableStyle.colorBins` array of `{"value":v, "color":c}` objects
+  * Improved rendering speed when changing the display variable for large lat/lon csv files.
+  * Default to moving feature CSVs if a time, latitude, longitude and a column named `id` are present.
+  * Fixed a bug so units flow through to charts of moving CSV features.
+  * Fixed a bug that prevented the `contextItem` of a `CatalogFunction` from showing during location selection.
+  * Fixed a bug that caused `&amp;` to appear in some URLs instead of simply `&`, leading to an error when visiting the link.
+  * Added the ability to pass a LineString to a Web Processing Service.
+  * Fixed a bug that prevented `tableStyle.dataVariable` = `null` from working.
+  * Uses a smarter default column for CSV files.
+  * Fixed a bug that caused an error message to appear repeatedly when there was an error downloading tiles for a base map.
+  * Fixed a bug that caused WMS layer names and WFS type names to not be displayed on the dataset info page.
+  * We now preserve the state of the feature information panel when sharing.  This was lost in the transition to the new user interface in 4.0.0.
+  * Added a popup message when using region mapping on old browsers without an `ArrayBuffer` type (such as Internet Explorer 9).  These browsers won't support vector tile based region mapping.
+  * Fixed bug where generic parameters such as strings were not passed through to WPS services.
+  * Fixed a bug where the chart panel did not update with polled data files.
+  * Removed the Australian Hydrography layer from `createAustraliaBaseMapOptions`, as the source is no longer available.
+  * Fixed a bug that caused the GetCapabilities URL of a WMS catalog item to be shown even when `hideSource` was set to true.
+  * Newly-added user data is now automatically selected for the preview map.
+  * Fixed a bug where selecting a new column on a moving point CSV file did not update the chart in the feature info panel.
+  * Fixed dropdowns dropping from the bounds of the screen in Safari.
+  * Fixed a bug that prevented the feature info panel from updating with polled lat/lon csvs.
+  * Improved handing of missing data in charts, so that it is ignored instead of shown as 0.
+
 ### 2016-08-25
 
 * Updated to [TerriaJS](https://github.com/TerriaJS/terriajs) 4.3.2.  Significant changes relevant to NationalMap users include:
